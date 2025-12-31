@@ -111,4 +111,4 @@ Kami menyambut kontribusi dari siapa saja! Silakan baca [Panduan Kontribusi](.gi
 
 ---
 
-**Built with ❤️ using Laravel & Tailwind CSS**
+**Built by R with ❤️ using Laravel & Tailwind CSS**
