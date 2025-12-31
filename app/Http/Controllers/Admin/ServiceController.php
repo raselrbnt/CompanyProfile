@@ -26,10 +26,9 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'nullable|image|mimes:svg,png,jpg,jpeg|max:2048',
+            'icon' => 'nullable|file|mimes:svg,png,jpg,jpeg|max:2048',
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'is_active' => 'boolean',
-            'order' => 'integer',
+            'order' => 'nullable|integer',
         ]);
         
         if ($request->hasFile('icon')) {
@@ -40,7 +39,8 @@ class ServiceController extends Controller
             $validated['image'] = $request->file('image')->store('services/images', 'public');
         }
         
-        $validated['is_active'] = $request->has('is_active');
+        // Handle checkbox - if checked, request will have 'is_active', if not, it won't
+        $validated['is_active'] = $request->has('is_active') ? true : false;
         
         Service::create($validated);
         
@@ -57,10 +57,9 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'nullable|image|mimes:svg,png,jpg,jpeg|max:2048',
+            'icon' => 'nullable|file|mimes:svg,png,jpg,jpeg|max:2048',
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'is_active' => 'boolean',
-            'order' => 'integer',
+            'order' => 'nullable|integer',
         ]);
         
         if ($request->hasFile('icon')) {
@@ -77,7 +76,8 @@ class ServiceController extends Controller
             $validated['image'] = $request->file('image')->store('services/images', 'public');
         }
         
-        $validated['is_active'] = $request->has('is_active');
+        // Handle checkbox - if checked, request will have 'is_active', if not, it won't
+        $validated['is_active'] = $request->has('is_active') ? true : false;
         
         $service->update($validated);
         

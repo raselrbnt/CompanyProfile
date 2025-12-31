@@ -7,7 +7,6 @@ use App\Models\ContactMessage;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\TeamMember;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -18,8 +17,8 @@ class DashboardController extends Controller
         $teamMembersCount = TeamMember::count();
         $unreadMessagesCount = ContactMessage::where('is_read', false)->count();
         
-        $latestProjects = Project::orderBy('created_at', 'desc')->take(5)->get();
-        $latestMessages = ContactMessage::orderBy('created_at', 'desc')->take(5)->get();
+        $latestProjects = Project::latest()->limit(5)->get();
+        $latestMessages = ContactMessage::latest()->limit(5)->get();
         
         return view('admin.dashboard', compact(
             'servicesCount',

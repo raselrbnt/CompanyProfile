@@ -27,7 +27,7 @@ class ProjectImageController extends Controller
         $validated = $request->validate([
             'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
             'caption' => 'nullable|string|max:255',
-            'order' => 'integer',
+            'order' => 'nullable|integer',
         ]);
         
         if ($request->hasFile('image')) {

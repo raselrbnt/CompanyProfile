@@ -23,6 +23,10 @@ class Project extends Model
         'completion_date' => 'date',
         'is_featured' => 'boolean',
     ];
+    
+    protected $attributes = [
+        'is_featured' => false,
+    ];
 
     public function images()
     {

@@ -1,4 +1,26 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ 
+        open: false, 
+        adminDropdownOpen: false,
+        scrollingDown: false,
+        lastScroll: 0
+    }" 
+    x-init="
+        window.addEventListener('scroll', () => {
+            let currentScroll = window.pageYOffset;
+            if (currentScroll <= 0) {
+                scrollingDown = false;
+                return;
+            }
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                scrollingDown = true;
+            } else if (currentScroll < lastScroll) {
+                scrollingDown = false;
+            }
+            lastScroll = currentScroll;
+        });
+    "
+    :class="{ '-translate-y-full': scrollingDown }"
+    class="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-40 transition-transform duration-300 shadow-sm">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -28,27 +50,6 @@
                         {{ __('Kontak') }}
                     </x-nav-link>
                 </div>
-
-                <!-- Admin Navigation Links -->
-                @auth
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.services.index')" :active="request()->routeIs('admin.services.*')">
-                            {{ __('Layanan') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
-                            {{ __('Proyek') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.team.index')" :active="request()->routeIs('admin.team.*')">
-                            {{ __('Tim') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.messages.index')" :active="request()->routeIs('admin.messages.*')">
-                            {{ __('Pesan') }}
-                        </x-nav-link>
-                    </div>
-                @endauth
             </div>
 
             <!-- Settings Dropdown -->
@@ -68,9 +69,11 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('dashboard')">
-                                {{ __('Dashboard') }}
-                            </x-dropdown-link>
+                            @if(Auth::user()->is_admin)
+                                <x-dropdown-link :href="route('admin.dashboard')">
+                                    {{ __('Admin Panel') }}
+                                </x-dropdown-link>
+                            @endif
 
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
@@ -101,75 +104,123 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <!-- Responsive Navigation Menu as Overlay Sidebar -->
+    <!-- Backdrop -->
+    <div x-show="open" 
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="open = false"
+         class="fixed inset-0 bg-black bg-opacity-50 z-40 sm:hidden"
+         style="display: none;">
+    </div>
+
+    <!-- Sidebar Menu -->
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="-translate-y-full"
+         x-transition:enter-end="translate-y-0"
+         x-transition:leave="transition ease-in duration-300 transform"
+         x-transition:leave-start="translate-y-0"
+         x-transition:leave-end="-translate-y-full"
+         class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50 sm:hidden overflow-y-auto max-h-screen"
+         style="display: none;">
+         
+        <!-- Close Button -->
+        <div class="flex justify-end p-4 border-b border-gray-200">
+            <button @click="open = false" class="text-gray-500 hover:text-gray-700">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">
+            <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')" @click="open = false">
                 {{ __('Beranda') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('services')" :active="request()->routeIs('services')">
+            <x-responsive-nav-link :href="route('services')" :active="request()->routeIs('services')" @click="open = false">
                 {{ __('Layanan') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('projects')" :active="request()->routeIs('projects')">
+            <x-responsive-nav-link :href="route('projects')" :active="request()->routeIs('projects')" @click="open = false">
                 {{ __('Proyek') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
+            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')" @click="open = false">
                 {{ __('Tentang Kami') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+            <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')" @click="open = false">
                 {{ __('Kontak') }}
             </x-responsive-nav-link>
         </div>
 
-        <!-- Responsive Admin Navigation Links -->
-        @auth
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                    {{ __('Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.services.index')" :active="request()->routeIs('admin.services.*')">
-                    {{ __('Layanan') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
-                    {{ __('Proyek') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.team.index')" :active="request()->routeIs('admin.team.*')">
-                    {{ __('Tim') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.messages.index')" :active="request()->routeIs('admin.messages.*')">
-                    {{ __('Pesan') }}
-                </x-responsive-nav-link>
-            </div>
-        @endauth
-
         <!-- Responsive Settings Options -->
         @auth
             <div class="pt-4 pb-1 border-t border-gray-200">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                </div>
+                @if(Auth::user()->is_admin)
+                    <!-- Admin Dropdown Header (Same as Admin Page) -->
+                    <button @click="adminDropdownOpen = !adminDropdownOpen" 
+                            class="w-full flex items-center justify-between px-4 py-2 hover:bg-gray-50 transition duration-150 ease-in-out">
+                        <div>
+                            <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                            <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                        </div>
+                        <svg class="h-6 w-6 text-gray-600 transform transition-transform duration-200" 
+                             :class="{'rotate-180': adminDropdownOpen}"
+                             fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-                <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-responsive-nav-link>
-
-                    <!-- Authentication -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-
-                        <x-responsive-nav-link :href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                    <!-- Dropdown Content -->
+                    <div x-show="adminDropdownOpen" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 transform scale-95"
+                         x-transition:enter-end="opacity-100 transform scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 transform scale-100"
+                         x-transition:leave-end="opacity-0 transform scale-95"
+                         class="mt-2 space-y-1 pb-4">
+                        <x-responsive-nav-link :href="route('admin.dashboard')" class="pl-8" @click="open = false">
+                            {{ __('Admin Panel') }}
                         </x-responsive-nav-link>
-                    </form>
-                </div>
+                        
+                        <!-- Authentication -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-responsive-nav-link :href="route('logout')"
+                                    class="pl-8"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-responsive-nav-link>
+                        </form>
+                    </div>
+                @else
+                    <!-- Non-Admin - Show Name and Email -->
+                    <div class="px-4">
+                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    </div>
+
+                    <div class="mt-3 space-y-1">
+                        <!-- Logout untuk non-admin -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-responsive-nav-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                {{ __('Log Out') }}
+                            </x-responsive-nav-link>
+                        </form>
+                    </div>
+                @endif
             </div>
         @else
             <div class="py-3 border-t border-gray-200">
-                <x-responsive-nav-link :href="route('login')">
+                <x-responsive-nav-link :href="route('login')" @click="open = false">
                     {{ __('Log in') }}
                 </x-responsive-nav-link>
             </div>
