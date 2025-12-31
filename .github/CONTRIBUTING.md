@@ -9,7 +9,7 @@ Terima kasih telah tertarik untuk berkontribusi pada proyek ini! Kami sangat men
 - [Pull Request Process](#pull-request-process)
 - [Coding Standards](#coding-standards)
 
-## #📖 Code of Conduct
+## 📖 Code of Conduct
 
 Dengan berpartisipasi dalam proyek ini, Anda diharapkan untuk menjaga lingkungan yang ramah dan profesional.
 
