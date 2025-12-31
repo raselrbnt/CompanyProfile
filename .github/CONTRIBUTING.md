@@ -120,7 +120,7 @@ npm run dev
 ### Database
 - Buat migration untuk setiap perubahan schema
 - Tambahkan seeder jika diperlukan
-- Gunakan foreign keys dengan cascade appropriately
+- Gunakan foreign keys dengan cascade yang sesuai
 
 ### Commit Messages
 Format commit message:
