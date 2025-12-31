@@ -692,4 +692,4 @@ Kontribusi selalu diterima! Silakan:
 
 ---
 
-**Built with ❤️ using Laravel & Tailwind CSS**
+**Built by R with ❤️ using Laravel & Tailwind CSS**
