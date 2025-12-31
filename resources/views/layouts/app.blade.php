@@ -19,6 +19,9 @@
     <div class="min-h-screen bg-gray-50">
         @include('layouts.navigation')
 
+        <!-- Spacer for fixed navbar -->
+        <div class="h-16"></div>
+
         <!-- Page Heading -->
         @if (isset($header))
             <header class="bg-white shadow">

@@ -21,4 +21,9 @@ class Service extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+    
+    protected $attributes = [
+        'is_active' => true,
+        'order' => 0,
+    ];
 }

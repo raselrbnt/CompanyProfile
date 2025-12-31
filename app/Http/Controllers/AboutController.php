@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\TeamMember;
-use Illuminate\Http\Request;
 
 class AboutController extends Controller
 {

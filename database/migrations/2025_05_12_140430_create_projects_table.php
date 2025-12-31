@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('client');
-            $table->date('completion_date');
+            $table->date('completion_date')->index();
             $table->string('location')->nullable();
             $table->string('featured_image')->nullable();
-            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_featured')->default(false)->index();
             $table->timestamps();
         });
     }

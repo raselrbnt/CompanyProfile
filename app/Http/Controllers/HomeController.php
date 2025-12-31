@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\TeamMember;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
         $featuredProjects = Project::where('is_featured', true)
-            ->orderBy('completion_date', 'desc')
+            ->latest('completion_date')
             ->take(3)
             ->get();
             

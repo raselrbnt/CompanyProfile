@@ -18,14 +18,19 @@ class AdminMiddleware
     {
         // Cek apakah user sudah login
         if (!Auth::check()) {
-            return redirect()->route('login');
+            // Redirect ke login dengan pesan
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk mengakses halaman admin.');
         }
         
-        // Tambahkan logika untuk memeriksa apakah user adalah admin
-        // Misalnya, jika Anda menambahkan kolom 'is_admin' di tabel users
-        // if (!Auth::user()->is_admin) {
-        //     return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-        // }
+        // Cek apakah user adalah admin
+        if (!Auth::user()->is_admin) {
+            // Logout user non-admin dan redirect ke home
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman admin.');
+        }
         
         return $next($request);
     }

@@ -30,27 +30,27 @@ class TeamMemberController extends Controller
             'photo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'order' => 'integer',
-            'is_active' => 'boolean',
+            'order' => 'nullable|integer',
         ]);
         
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('team', 'public');
         }
         
-        $validated['is_active'] = $request->has('is_active');
+        // Handle checkbox - if checked, request will have 'is_active', if not, it won't
+        $validated['is_active'] = $request->has('is_active') ? true : false;
         
         TeamMember::create($validated);
         
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil ditambahkan.');
     }
     
-    public function edit(TeamMember $member)
+    public function edit(TeamMember $team)
     {
-        return view('admin.team.edit', compact('member'));
+        return view('admin.team.edit', compact('team'));
     }
     
-    public function update(Request $request, TeamMember $member)
+    public function update(Request $request, TeamMember $team)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -59,31 +59,31 @@ class TeamMemberController extends Controller
             'photo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'order' => 'integer',
-            'is_active' => 'boolean',
+            'order' => 'nullable|integer',
         ]);
         
         if ($request->hasFile('photo')) {
-            if ($member->photo) {
-                Storage::disk('public')->delete($member->photo);
+            if ($team->photo) {
+                Storage::disk('public')->delete($team->photo);
             }
             $validated['photo'] = $request->file('photo')->store('team', 'public');
         }
         
-        $validated['is_active'] = $request->has('is_active');
+        // Handle checkbox - if checked, request will have 'is_active', if not, it won't
+        $validated['is_active'] = $request->has('is_active') ? true : false;
         
-        $member->update($validated);
+        $team->update($validated);
         
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil diperbarui.');
     }
     
-    public function destroy(TeamMember $member)
+    public function destroy(TeamMember $team)
     {
-        if ($member->photo) {
-            Storage::disk('public')->delete($member->photo);
+        if ($team->photo) {
+            Storage::disk('public')->delete($team->photo);
         }
         
-        $member->delete();
+        $team->delete();
         
         return redirect()->route('admin.team.index')->with('success', 'Anggota tim berhasil dihapus.');
     }

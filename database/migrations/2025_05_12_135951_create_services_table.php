@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use function Laravel\Prompts\table;
 
 return new class extends Migration
 {
@@ -18,8 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->string('icon')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->integer('order')->default(0);
+            $table->boolean('is_active')->default(true)->index();
+            $table->integer('order')->default(0)->index();
             $table->timestamps();
         });
     }

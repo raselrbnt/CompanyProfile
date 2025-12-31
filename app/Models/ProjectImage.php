@@ -15,6 +15,10 @@ class ProjectImage extends Model
         'caption',
         'order'
     ];
+    
+    protected $attributes = [
+        'order' => 0,
+    ];
 
     public function project()
     {

@@ -11,7 +11,9 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::orderBy('completion_date', 'desc')->paginate(10);
+        $projects = Project::with('images')
+            ->latest('completion_date')
+            ->paginate(10);
         
         return view('admin.projects.index', compact('projects'));
     }
@@ -30,14 +32,14 @@ class ProjectController extends Controller
             'completion_date' => 'required|date',
             'location' => 'nullable|string|max:255',
             'featured_image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
-            'is_featured' => 'boolean',
         ]);
         
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('projects', 'public');
         }
         
-        $validated['is_featured'] = $request->has('is_featured');
+        // Handle checkbox - if checked, request will have 'is_featured', if not, it won't
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
         
         Project::create($validated);
         
@@ -58,7 +60,6 @@ class ProjectController extends Controller
             'completion_date' => 'required|date',
             'location' => 'nullable|string|max:255',
             'featured_image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
-            'is_featured' => 'boolean',
         ]);
         
         if ($request->hasFile('featured_image')) {
@@ -68,7 +69,8 @@ class ProjectController extends Controller
             $validated['featured_image'] = $request->file('featured_image')->store('projects', 'public');
         }
         
-        $validated['is_featured'] = $request->has('is_featured');
+        // Handle checkbox - if checked, request will have 'is_featured', if not, it won't
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
         
         $project->update($validated);
         
